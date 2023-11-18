@@ -1,0 +1,42 @@
+makeCacheMatrix <- function(matrix = matrix()) {
+  inv <- NULL
+  cache <- NULL
+  
+  setMatrix <- function(newMatrix) {
+    matrix <<- newMatrix
+    inv <<- NULL
+    cache <<- NULL
+  }
+  
+  getMatrix <- function() matrix
+  
+  getInverse <- function() inv
+  
+  setInverse <- function(newInverse) {
+    inv <<- newInverse
+    cache <<- Sys.time()
+  }
+  
+  getCacheTimestamp <- function() cache
+  
+  list(setMatrix = setMatrix,
+       getMatrix = getMatrix,
+       getInverse = getInverse,
+       setInverse = setInverse,
+       getCacheTimestamp = getCacheTimestamp)
+}
+
+cacheSolve <- function(cacheMatrix, ...) {
+  cachedInverse <- cacheMatrix$getInverse()
+  if (!is.null(cachedInverse)) {
+    message("Getting cached inverse.")
+    return(cachedInverse)
+  }
+  
+  matrixData <- cacheMatrix$getMatrix()
+  inverse <- solve(matrixData, ...)
+  
+  cacheMatrix$setInverse(inverse)
+  
+  inverse
+}
