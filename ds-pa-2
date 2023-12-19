@@ -1,24 +1,32 @@
+# Function to create a cache matrix object
 makeCacheMatrix <- function(matrix = matrix()) {
+  # Initialize variables to store the inverse and cache timestamp
   inv <- NULL
   cache <- NULL
   
+  # Function to set a new matrix for the cache
   setMatrix <- function(newMatrix) {
     matrix <<- newMatrix
     inv <<- NULL
     cache <<- NULL
   }
   
+  # Function to get the current matrix
   getMatrix <- function() matrix
   
+  # Function to get the current inverse
   getInverse <- function() inv
   
+  # Function to set a new inverse and update the cache timestamp
   setInverse <- function(newInverse) {
     inv <<- newInverse
     cache <<- Sys.time()
   }
   
+  # Function to get the cache timestamp
   getCacheTimestamp <- function() cache
   
+  # Return a list of functions for external use
   list(setMatrix = setMatrix,
        getMatrix = getMatrix,
        getInverse = getInverse,
@@ -26,17 +34,24 @@ makeCacheMatrix <- function(matrix = matrix()) {
        getCacheTimestamp = getCacheTimestamp)
 }
 
+# Function to solve a matrix using caching for the inverse
 cacheSolve <- function(cacheMatrix, ...) {
+  # Check if the inverse is already cached
   cachedInverse <- cacheMatrix$getInverse()
   if (!is.null(cachedInverse)) {
     message("Getting cached inverse.")
     return(cachedInverse)
   }
   
+  # If not cached, get the matrix data from the cache
   matrixData <- cacheMatrix$getMatrix()
+  
+  # Solve the matrix and calculate the inverse
   inverse <- solve(matrixData, ...)
   
+  # Cache the inverse and update the timestamp
   cacheMatrix$setInverse(inverse)
   
+  # Return the inverse
   inverse
 }
